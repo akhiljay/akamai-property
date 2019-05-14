@@ -392,7 +392,7 @@
                 "options": {
                     "action": "ADD",
                     "standardAddHeaderName": "OTHER",
-                    "headerValue": "akamai-sanded-tieredribution",
+                    "headerValue": "akamai-sanded-tiereribution",
                     "customHeaderName": "via"
                 }
             },
