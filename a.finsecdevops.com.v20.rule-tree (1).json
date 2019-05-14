@@ -1,0 +1,412 @@
+{
+    "accountId": "act_F-AC-2466517",
+    "contractId": "ctr_G-2HFSI15",
+    "groupId": "grp_126485",
+    "propertyName": "a.finsecdevops.com",
+    "propertyVersion": 20,
+    "ruleFormat": "latest",
+    "propertyId": "prp_514616",
+    "rules": {
+        "name": "default",
+        "children": [
+            {
+                "name": "Performance",
+                "children": [
+                    {
+                        "name": "Compressible Objects",
+                        "children": [],
+                        "behaviors": [
+                            {
+                                "name": "gzipResponse",
+                                "options": {
+                                    "behavior": "ALWAYS"
+                                }
+                            }
+                        ],
+                        "criteria": [
+                            {
+                                "name": "contentType",
+                                "options": {
+                                    "matchCaseSensitive": false,
+                                    "matchOperator": "IS_ONE_OF",
+                                    "matchWildcard": true,
+                                    "values": [
+                                        "text/*",
+                                        "application/javascript",
+                                        "application/x-javascript",
+                                        "application/x-javascript*",
+                                        "application/json",
+                                        "application/x-json",
+                                        "application/*+json",
+                                        "application/*+xml",
+                                        "application/text",
+                                        "application/vnd.microsoft.icon",
+                                        "application/vnd-ms-fontobject",
+                                        "application/x-font-ttf",
+                                        "application/x-font-opentype",
+                                        "application/x-font-truetype",
+                                        "application/xmlfont/eot",
+                                        "application/xml",
+                                        "font/opentype",
+                                        "font/otf",
+                                        "font/eot",
+                                        "image/svg+xml",
+                                        "image/vnd.microsoft.icon"
+                                    ]
+                                }
+                            }
+                        ],
+                        "criteriaMustSatisfy": "all",
+                        "comments": "Compresses content to improve performance of clients with slow connections. Applies Last Mile Acceleration to requests when the returned object supports gzip compression."
+                    }
+                ],
+                "behaviors": [
+                    {
+                        "name": "enhancedAkamaiProtocol",
+                        "options": {
+                            "display": ""
+                        }
+                    },
+                    {
+                        "name": "http2",
+                        "options": {
+                            "enabled": ""
+                        }
+                    },
+                    {
+                        "name": "allowTransferEncoding",
+                        "options": {
+                            "enabled": true
+                        }
+                    },
+                    {
+                        "name": "removeVary",
+                        "options": {
+                            "enabled": true
+                        }
+                    },
+                    {
+                        "name": "prefetch",
+                        "options": {
+                            "enabled": false
+                        }
+                    }
+                ],
+                "criteria": [],
+                "criteriaMustSatisfy": "all",
+                "comments": "Improves the performance of delivering objects to end users. Behaviors in this rule are applied to all requests as appropriate."
+            },
+            {
+                "name": "Offload",
+                "children": [
+                    {
+                        "name": "Static Objects",
+                        "children": [],
+                        "behaviors": [
+                            {
+                                "name": "caching",
+                                "options": {
+                                    "behavior": "MAX_AGE",
+                                    "mustRevalidate": false,
+                                    "ttl": "7d"
+                                }
+                            },
+                            {
+                                "name": "prefreshCache",
+                                "options": {
+                                    "enabled": true,
+                                    "prefreshval": 90
+                                }
+                            },
+                            {
+                                "name": "prefetchable",
+                                "options": {
+                                    "enabled": true
+                                }
+                            }
+                        ],
+                        "criteria": [
+                            {
+                                "name": "fileExtension",
+                                "options": {
+                                    "matchOperator": "IS_ONE_OF",
+                                    "values": [
+                                        "gif",
+                                        "png",
+                                        "jpg",
+                                        "jpeg",
+                                        "webp"
+                                    ],
+                                    "matchCaseSensitive": false
+                                }
+                            }
+                        ],
+                        "criteriaMustSatisfy": "any",
+                        "comments": "Overrides the default caching behavior for images, music, and similar objects that are cached on the edge server. Because these object types are static, the TTL is long."
+                    },
+                    {
+                        "name": "Uncacheable Responses",
+                        "children": [],
+                        "behaviors": [
+                            {
+                                "name": "downstreamCache",
+                                "options": {
+                                    "behavior": "TUNNEL_ORIGIN"
+                                }
+                            }
+                        ],
+                        "criteria": [
+                            {
+                                "name": "cacheability",
+                                "options": {
+                                    "matchOperator": "IS_NOT",
+                                    "value": "CACHEABLE"
+                                }
+                            }
+                        ],
+                        "criteriaMustSatisfy": "all",
+                        "comments": "Overrides the default downstream caching behavior for uncacheable object types. Instructs the edge server to pass Cache-Control and/or Expire headers from the origin to the client."
+                    }
+                ],
+                "behaviors": [
+                    {
+                        "name": "caching",
+                        "options": {
+                            "behavior": "NO_STORE"
+                        }
+                    },
+                    {
+                        "name": "cacheError",
+                        "options": {
+                            "enabled": true,
+                            "preserveStale": true,
+                            "ttl": "10s"
+                        }
+                    },
+                    {
+                        "name": "downstreamCache",
+                        "options": {
+                            "allowBehavior": "LESSER",
+                            "behavior": "ALLOW",
+                            "sendHeaders": "CACHE_CONTROL_AND_EXPIRES",
+                            "sendPrivate": false
+                        }
+                    },
+                    {
+                        "name": "tieredDistribution",
+                        "options": {
+                            "enabled": true
+                        }
+                    },
+                    {
+                        "name": "resourceOptimizerExtendedCompatibility",
+                        "options": {
+                            "enabled": true,
+                            "enableAllFeatures": true
+                        }
+                    }
+                ],
+                "criteria": [],
+                "criteriaMustSatisfy": "all",
+                "comments": "Controls caching, which offloads traffic away from the origin. Most objects types are not cached. However, the child rules override this behavior for certain subsets of requests."
+            },
+            {
+                "name": "IM rules",
+                "children": [],
+                "behaviors": [
+                    {
+                        "name": "imageManager",
+                        "options": {
+                            "settingsTitle": "",
+                            "enabled": true,
+                            "superCacheRegion": "US",
+                            "trafficTitle": "",
+                            "cpCodeOriginal": {
+                                "id": 808197,
+                                "description": "craig-new.akamaioca.com - IM Pristine Images",
+                                "products": [
+                                    "Fresca"
+                                ],
+                                "createdDate": 1546710850000,
+                                "cpCodeLimits": null,
+                                "name": "craig-new.akamaioca.com - IM Pristine Images"
+                            },
+                            "cpCodeTransformed": {
+                                "id": 808198,
+                                "description": "craig-new.akamaioca.com - IM Derivative Images",
+                                "products": [
+                                    "Fresca"
+                                ],
+                                "createdDate": 1546710850000,
+                                "cpCodeLimits": null,
+                                "name": "craig-new.akamaioca.com - IM Derivative Images"
+                            },
+                            "apiReferenceTitle": "",
+                            "advanced": true,
+                            "resize": false,
+                            "applyBestFileType": true,
+                            "policyToken": "grayscale"
+                        }
+                    },
+                    {
+                        "name": "caching",
+                        "options": {
+                            "behavior": "MAX_AGE",
+                            "mustRevalidate": false,
+                            "ttl": "1d"
+                        }
+                    }
+                ],
+                "criteria": [
+                    {
+                        "name": "fileExtension",
+                        "options": {
+                            "matchOperator": "IS_ONE_OF",
+                            "values": [
+                                "jpg",
+                                "gif",
+                                "png"
+                            ],
+                            "matchCaseSensitive": false
+                        }
+                    }
+                ],
+                "criteriaMustSatisfy": "all"
+            },
+            {
+                "name": "remove iframe rules",
+                "children": [],
+                "behaviors": [
+                    {
+                        "name": "modifyOutgoingResponseHeader",
+                        "options": {
+                            "action": "DELETE",
+                            "standardDeleteHeaderName": "ACCESS_CONTROL_ALLOW_ORIGIN"
+                        }
+                    },
+                    {
+                        "name": "modifyOutgoingResponseHeader",
+                        "options": {
+                            "action": "DELETE",
+                            "standardDeleteHeaderName": "ACCESS_CONTROL_ALLOW_METHODS"
+                        }
+                    },
+                    {
+                        "name": "modifyOutgoingResponseHeader",
+                        "options": {
+                            "action": "DELETE",
+                            "standardDeleteHeaderName": "ACCESS_CONTROL_ALLOW_HEADERS"
+                        }
+                    },
+                    {
+                        "name": "modifyOutgoingResponseHeader",
+                        "options": {
+                            "action": "DELETE",
+                            "standardDeleteHeaderName": "ACCESS_CONTROL_EXPOSE_HEADERS"
+                        }
+                    },
+                    {
+                        "name": "modifyOutgoingResponseHeader",
+                        "options": {
+                            "action": "DELETE",
+                            "standardDeleteHeaderName": "ACCESS_CONTROL_ALLOW_CREDENTIALS"
+                        }
+                    },
+                    {
+                        "name": "modifyOutgoingResponseHeader",
+                        "options": {
+                            "action": "DELETE",
+                            "standardDeleteHeaderName": "OTHER",
+                            "customHeaderName": "x-frame-options"
+                        }
+                    }
+                ],
+                "criteria": [
+                    {
+                        "name": "hostname",
+                        "options": {
+                            "matchOperator": "IS_ONE_OF",
+                            "values": [
+                                "sandbox-playground.akamai.tools",
+                                "ew-playground.akamai.tools"
+                            ]
+                        }
+                    }
+                ],
+                "criteriaMustSatisfy": "all"
+            }
+        ],
+        "behaviors": [
+            {
+                "name": "origin",
+                "options": {
+                    "cacheKeyHostname": "REQUEST_HOST_HEADER",
+                    "compress": true,
+                    "enableTrueClientIp": true,
+                    "forwardHostHeader": "REQUEST_HOST_HEADER",
+                    "hostname": "origin.finsecdevops.com",
+                    "httpPort": 80,
+                    "httpsPort": 443,
+                    "originSni": true,
+                    "originType": "CUSTOMER",
+                    "verificationMode": "CUSTOM",
+                    "originCertificate": "",
+                    "ports": "",
+                    "customValidCnValues": [
+                        "{{Origin Hostname}}",
+                        "{{Forward Host Header}}"
+                    ],
+                    "originCertsToHonor": "STANDARD_CERTIFICATE_AUTHORITIES",
+                    "standardCertificateAuthorities": [
+                        "akamai-permissive",
+                        "THIRD_PARTY_AMAZON"
+                    ],
+                    "trueClientIpHeader": "True-Client-IP",
+                    "trueClientIpClientSetting": false
+                }
+            },
+            {
+                "name": "cpCode",
+                "options": {
+                    "value": {
+                        "id": 786895,
+                        "description": "craiga.akamaioca.com",
+                        "products": [
+                            "Fresca"
+                        ],
+                        "createdDate": 1540930674000,
+                        "cpCodeLimits": null,
+                        "name": "craiga.akamaioca.com"
+                    }
+                }
+            },
+            {
+                "name": "allowPost",
+                "options": {
+                    "allowWithoutContentLength": true,
+                    "enabled": true
+                }
+            },
+            {
+                "name": "modifyOutgoingResponseHeader",
+                "options": {
+                    "action": "ADD",
+                    "standardAddHeaderName": "OTHER",
+                    "headerValue": "akamai-sandboxed",
+                    "customHeaderName": "via"
+                }
+            },
+            {
+                "name": "brotli",
+                "options": {
+                    "enabled": true
+                }
+            }
+        ],
+        "options": {
+            "is_secure": true
+        },
+        "variables": [],
+        "comments": "The behaviors in the Default Rule apply to all requests for the property hostname(s) unless another rule overrides the Default Rule settings."
+    }
+}
