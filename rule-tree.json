@@ -2,7 +2,7 @@
     "accountId": "act_F-AC-2466517",
     "contractId": "ctr_G-2HFSI15",
     "groupId": "grp_126485",
-    "propertyName": "a.finsecdevops.com",
+    "propertyName": "a.foo.com",
     "propertyVersion": 20,
     "ruleFormat": "latest",
     "propertyId": "prp_514616",
@@ -344,7 +344,7 @@
                     "compress": true,
                     "enableTrueClientIp": true,
                     "forwardHostHeader": "REQUEST_HOST_HEADER",
-                    "hostname": "origin.finsecdevops.com",
+                    "hostname": "origin.foo.com",
                     "httpPort": 80,
                     "httpsPort": 443,
                     "originSni": true,
@@ -392,7 +392,7 @@
                 "options": {
                     "action": "ADD",
                     "standardAddHeaderName": "OTHER",
-                    "headerValue": "akamai-sanded-tiereribution",
+                    "headerValue": "akamai-demo",
                     "customHeaderName": "via"
                 }
             },
